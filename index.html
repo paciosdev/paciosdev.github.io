@@ -222,6 +222,22 @@
     margin-top: 20px;
 }
 
+        /* Stile per il loader */
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #0071e3;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 36px;
@@ -260,91 +276,9 @@
         <h1 class="my-apps-title">My apps</h1>
         
         <section id="apps" class="apps-section">
-            <div class="apps-grid">
-                <!-- App 1 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/daily.png" alt="DailyWeights">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">DailyWeights</h3>
-                        <p class="app-description">Track your weight journey with an elegant, intuitive interface. Set goals, monitor progress, and visualize your data with beautiful charts. Improve your body with DailyWeights.</p>
-                        <a href="https://apps.apple.com/us/app/bilancia-bmi-daily-weights/id6443655555" class="app-link">App Store</a>
-                    </div>
-                </div>
-                
-                <!-- App 2 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/study.png" alt="Study Timer">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">Study Timer</h3>
-                        <p class="app-description">Boost your productivity with this minimalist Pomodoro timer. Custom study intervals, detailed statistics, and focus mode to help you achieve more.</p>
-                        <a href="https://apps.apple.com/us/app/pomodoro-timer-per-studenti/id6468426065" class="app-link">App Store</a>
-                    </div>
-                </div>
-                
-                <!-- App 3 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/fitfood.png" alt="FitFood">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">FitFood</h3>
-                        <p class="app-description">Keep your diet while eating tasty food, that's the best place where to experience this. FitFood offers you several recipes based on several categories, High Protein, Low Carb etc.</p>
-                        <a href="https://apps.apple.com/us/app/fit-food-ideal-protein-diet/id1588270304" class="app-link">App Store</a>
-                    </div>
-                </div>
-                
-                <!-- App 4 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/pic2pdf.png" alt="Photo PDF Converter">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">Photo PDF Converter</h3>
-                        <p class="app-description">Transform your photos into high-quality PDF documents in seconds. Batch processing, custom page sizes, and seamless sharing options.</p>
-                        <a href="https://apps.apple.com/us/app/foto-pdf-converter-pic2pdf/id6740090815" class="app-link">App Store</a>
-                    </div>
-                </div>
-
-                <!-- App 5 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/wish.png" alt="WishIt!">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">WishIt!</h3>
-                        <p class="app-description">Keep track of all your wishes in one beautiful place. Create lists, add photos, set price alerts, and share with friends and family for special occasions.</p>
-                        <a href="https://apps.apple.com/us/app/compleanni-crea-auguri-wishit/id1576191676" class="app-link">App Store</a>
-                    </div>
-                </div>
-
-                <!-- App 6 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/spicy.jpg" alt="Spicy Truth or Dare">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">Spicy Truth or Dare</h3>
-                        <p class="app-description">Spice up your parties with this modern twist on a classic game. Various difficulty levels and categories ensure endless fun for adult gatherings.</p>
-                        <a href="https://apps.apple.com/us/app/spicy-truth-or-dare-spiceup/id6740998467" class="app-link">App Store</a>
-                    </div>
-                </div>
-
-                <!-- App 7 -->
-                <div class="app-card">
-                    <div class="app-icon">
-                        <img src="assets/uni.png" alt="UniChecker">
-                    </div>
-                    <div class="app-info">
-                        <h3 class="app-name">UniChecker</h3>
-                        <p class="app-description">The essential companion for university students. Track exam schedules, manage grades, calculate GPA, and set reminders for assignments with this smart academic tool.</p>
-                        <a href="https://apps.apple.com/us/app/libretto-universitario-media/id1551514057" class="app-link">App Store</a>
-                    </div>
-                </div>
-
+            <div id="loader" class="loader"></div>
+            <div id="apps-grid" class="apps-grid">
+                <!-- Le app verranno caricate dinamicamente qui -->
             </div>
         </section>
 
@@ -360,5 +294,68 @@
             
         </footer>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ID sviluppatore Apple
+            const developerId = '1551514059';
+            
+            // Elemento dove verranno mostrate le app
+            const appsGrid = document.getElementById('apps-grid');
+            const loader = document.getElementById('loader');
+            
+            // Funzione per caricare le app dall'API iTunes
+            async function loadApps() {
+                try {
+                    // URL dell'API iTunes Search per ottenere tutte le app di uno sviluppatore
+                    const apiUrl = `https://itunes.apple.com/lookup?id=${developerId}&entity=software&limit=200`;
+                    
+                    // Aggiungiamo un parametro per evitare la cache
+                    const response = await fetch(`${apiUrl}&_=${new Date().getTime()}`);
+                    const data = await response.json();
+                    
+                    // Nascondi il loader
+                    loader.style.display = 'none';
+                    
+                    // Filtra solo le app (esclude gli aggiornamenti, etc.)
+                    const apps = data.results.filter(item => item.wrapperType === 'software');
+                    
+                    if (apps.length === 0) {
+                        appsGrid.innerHTML = '<p>Nessuna app trovata.</p>';
+                        return;
+                    }
+                    
+                    // Crea le card per ogni app
+                    apps.forEach(app => {
+                        // Sostituisci l'URL dell'icona per ottenere una risoluzione più alta
+                        const highResIcon = app.artworkUrl512 || app.artworkUrl100.replace('100x100', '512x512');
+                        
+                        const appCard = document.createElement('div');
+                        appCard.className = 'app-card';
+                        appCard.innerHTML = `
+                            <div class="app-icon">
+                                <img src="${highResIcon}" alt="${app.trackName}">
+                            </div>
+                            <div class="app-info">
+                                <h3 class="app-name">${app.trackName}</h3>
+                                <p class="app-description">${app.description.substring(0, 150)}...</p>
+                                <a href="${app.trackViewUrl}" class="app-link" target="_blank">App Store</a>
+                            </div>
+                        `;
+                        
+                        appsGrid.appendChild(appCard);
+                    });
+                    
+                } catch (error) {
+                    console.error('Errore nel caricamento delle app:', error);
+                    loader.style.display = 'none';
+                    appsGrid.innerHTML = '<p>Si è verificato un errore nel caricamento delle app. Riprova più tardi.</p>';
+                }
+            }
+            
+            // Carica le app quando la pagina è pronta
+            loadApps();
+        });
+    </script>
 </body>
 </html>
